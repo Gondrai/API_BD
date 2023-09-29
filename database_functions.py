@@ -7,7 +7,7 @@ INSERT_ATOR = (
 ) # Inserir ator 
 
 SELECT_ATOR = (
-    "SELECT primeiro_nome, sobrenome, data_nasc, id_premios FROM sistema.ator WHERE sobrenome LIKE %s" 
+    "SELECT primeiro_nome, sobrenome, data_nasc, id_premios FROM sistema.ator WHERE sobrenome ILIKE %s and primeiro_nome ILIKE %s" 
 ) # Selecionar ator 
 
 DELETE_ATOR = (
@@ -15,7 +15,7 @@ DELETE_ATOR = (
 ) # Deletar ator 
 
 UPDATE_ATOR = (
-    "UPDATE sistema.ator SET primeiro_nome = %s , sobrenome = %s , data_nasc = %s , id_premios =  %s WHERE primeiro_nome = %s and sobrenome = %s"
+    "UPDATE sistema.ator SET primeiro_nome = %s, sobrenome = %s, data_nasc = %s, id_premios = %s WHERE primeiro_nome = %s and sobrenome = %s"
 ) # Atualizar ator 
 
 INSERT_FILME = (
@@ -23,7 +23,7 @@ INSERT_FILME = (
 ) # Inserir filme 
 
 SELECT_FILME = (
-    "SELECT idioma_original, titulo, subtitulo, sinopse, ano, duracao, id_premios FROM sistema.filme WHERE titulo LIKE %s" 
+    "SELECT idioma_original, titulo, subtitulo, sinopse, ano, duracao, id_premios, id_roteirista, id_diretor FROM sistema.filme WHERE titulo ILIKE %s" 
 ) # Selecionar filme 
 
 DELETE_FILME = (
@@ -32,7 +32,7 @@ DELETE_FILME = (
 
 
 UPDATE_FILME = (
-    "UPDATE sistema.filme SET titulo='%s', subtitulo='%s', idioma_original='%s', sinopse='%s, ano='%s', duracao='%s' WHERE titulo ILIKE '%s'"
+    "UPDATE sistema.filme SET titulo=%s, subtitulo=%s, idioma_original=%s, sinopse=%s, ano=%s, duracao=%s WHERE titulo ILIKE %s"
 ) # Atualizar filme 
 
 load_dotenv()
@@ -40,16 +40,20 @@ url = os.getenv("DATABASE_URL")
 connection = psycopg2.connect(url)
 
 def insert_atores(primeiro_nome, sobrenome, data_nasc, id_premios):
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(INSERT_ATOR, (primeiro_nome, sobrenome, data_nasc,id_premios))
-            ator_id = cursor.fetchone()[0]
-    return ator_id
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                cursor.execute(INSERT_ATOR, (primeiro_nome, sobrenome, data_nasc, id_premios))
+                ator_id = cursor.fetchone()[0]
+        return ator_id
+    except psycopg2.Error as e:
+        # Trate a exceção aqui, por exemplo, registrando-a ou retornando uma mensagem de erro
+        return None
 
-def select_atores(sobrenome):
+def select_atores(sobrenome, primeiro_nome):
     with connection:
         with connection.cursor() as cursor:
-            cursor.execute(SELECT_ATOR, (f'%{sobrenome}%',))
+            cursor.execute(SELECT_ATOR, (sobrenome, primeiro_nome))
             resultados = cursor.fetchall()
         
         resultado_json = []
@@ -73,7 +77,7 @@ def delete_atores(sobrenome, primeiro_nome):
 def update_atores(primeiro_nome, sobrenome, data_nasc, id_premios):
     with connection:
         with connection.cursor() as cursor:
-            cursor.execute(INSERT_ATOR, (primeiro_nome, sobrenome, data_nasc, id_premios))
+            cursor.execute(UPDATE_ATOR, (primeiro_nome, sobrenome, data_nasc, id_premios, primeiro_nome, sobrenome))
             ator_id = cursor.fetchone()[0]
     return ator_id
 
@@ -85,24 +89,28 @@ def insert_filme(idioma_original, titulo, subtitulo, sinopse, ano, duracao, id_p
             filme_id = cursor.fetchone()[0]
     return filme_id
 
-
 def select_filmes(titulo):
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(SELECT_ATOR, (titulo))
-            resultados = cursor.fetchall()
-        
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                cursor.execute(SELECT_FILME, (f'%{titulo}%',))
+                resultados = cursor.fetchall()
+
         resultado_json = []
         for resultado in resultados:
             resultado_json.append({
-                'idioma_original' : resultado[0],
-                'titulo' : resultado[1],
-                'subtitulo' : resultado[2],
-                'sinopse' : resultado[3],
-                'ano' : resultado[4],
-                'duracao' : resultado[5],
-                'id_premios' : resultado[6],
-                'id_roteirista' : resultado[7],
-                'id_diretor' : resultado[8],
+                'idioma_original': resultado[0],
+                'titulo': resultado[1],
+                'subtitulo': resultado[2],
+                'sinopse': resultado[3],
+                'ano': resultado[4],
+                'duracao': resultado[5],
+                'id_premios': resultado[6],
+                'id_roteirista': resultado[7],
+                'id_diretor': resultado[8]
             })
 
+        return resultado_json
+    except psycopg2.Error as e:
+        # Trate a exceção aqui, por exemplo, registrando-a ou retornando uma mensagem de erro
+        return []
