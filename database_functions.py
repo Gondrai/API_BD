@@ -81,9 +81,9 @@ def update_atores(primeiro_nome, sobrenome, data_nasc, id_premios):
 def insert_filme(idioma_original, titulo, subtitulo, sinopse, ano, duracao, id_premios, id_roteirista, id_diretor):
     with connection:
         with connection.cursor() as cursor:
-            cursor.execute(INSERT_ATOR, (idioma_original, titulo, subtitulo, sinopse, ano, duracao, id_premios, id_roteirista, id_diretor))
-            ator_id = cursor.fetchone()[0]
-    return ator_id
+            cursor.execute(INSERT_FILME, (idioma_original, titulo, subtitulo, sinopse, ano, duracao, id_premios, id_roteirista, id_diretor))
+            filme_id = cursor.fetchone()[0]
+    return filme_id
 
 
 
