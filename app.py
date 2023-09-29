@@ -1,6 +1,6 @@
 headers = {'charset': 'utf-8'}
 from flask import Flask, request, jsonify
-from database_functions import insert_atores, select_atores, delete_atores, update_atores, insert_filme
+from database_functions import insert_atores, select_atores, delete_atores, update_atores, insert_filme, select_filmes
 
 app = Flask(__name__)
 
@@ -55,8 +55,23 @@ def inserir_filmes_route():
     id_filme = insert_filme(idioma_original, titulo, subtitulo, sinopse, ano, duracao, id_premios, id_roteirista, id_diretor)
     return {"id": id_filme, "message": f"Ator(a) {titulo} inserido!"}
 
-
-
+@app.get('/api/Filmes atores')
+def consultar_atores_route():
+    try:
+        data = request.get_json()
+        idioma_original = data["idioma_original"]
+        titulo = data["titulo"]
+        subtitulo = data["subtitulo"]
+        sinopse = data["sinopse"]
+        ano = data["ano"]
+        duracao = data["duracao"]
+        id_premios = data["id_premios"]
+        id_roteirista = data["id_roteirista"]
+        id_diretor = data["id_roteirista"]
+        resultados = select_filmes(idioma_original, titulo, subtitulo, sinopse, ano, duracao, id_premios, id_roteirista, id_diretor)
+        return jsonify(resultados)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == "__main__":

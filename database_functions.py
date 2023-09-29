@@ -86,5 +86,23 @@ def insert_filme(idioma_original, titulo, subtitulo, sinopse, ano, duracao, id_p
     return ator_id
 
 
-
+def select_filmes(titulo):
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(SELECT_ATOR, (titulo))
+            resultados = cursor.fetchall()
+        
+        resultado_json = []
+        for resultado in resultados:
+            resultado_json.append({
+                'idioma_original' : resultado[0],
+                'titulo' : resultado[1],
+                'subtitulo' : resultado[2],
+                'sinopse' : resultado[3],
+                'ano' : resultado[4],
+                'duracao' : resultado[5],
+                'id_premios' : resultado[6],
+                'id_roteirista' : resultado[7],
+                'id_diretor' : resultado[8],
+            })
 
