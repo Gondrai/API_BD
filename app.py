@@ -10,9 +10,9 @@ def insert_ator_route():
     primeiro_nome = data["primeiro_nome"]
     sobrenome = data["sobrenome"]
     data_nasc = data["data_nasc"]
-    id_premios = data["id_premios"]
-    id_ator = insert_atores(primeiro_nome, sobrenome, data_nasc, id_premios)
+    id_ator = insert_atores(primeiro_nome, sobrenome, data_nasc)
     return {"id": id_ator, "message": f"Ator(a) {primeiro_nome} inserido!"}
+
 
 @app.get('/api/consultar_atores')
 def consultar_atores_route():
@@ -29,7 +29,8 @@ def consultar_atores_route():
 def deletar_atores_route():
     data = request.get_json()
     sobrenome = data["sobrenome"]
-    message = delete_atores(sobrenome)
+    primeiro_nome = data["primeiro_nome"]
+    message = delete_atores(sobrenome, primeiro_nome)
     return {"message": message}
 
 @app.post('/api/atualizar_atores')
