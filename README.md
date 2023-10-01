@@ -14,6 +14,7 @@ Tecnologias utilizadas:
 |.flaskenv| [Configurações Flask](.flaskenv)|
 |database_functions| [Funções CRUD](database_functions.py)|
 |requirements| [Libs necessárias](requirements.txt)|
+|consultas| [Consultas(Querys)](consultas.txt)|
 
 
 ```
