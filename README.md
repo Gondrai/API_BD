@@ -17,10 +17,12 @@ Tecnologias utilizadas:
 
 
 ```
-Padrão de envio de mensagem JSON
+Padrão de envio de mensagem JSON INSERT ATOR
   {
     "primeiro_nome":"felisberto"
-     ...
+    "sobrenome":"juas"
+    "data_nasc":"yyyy-mm-dd" 
+    "id_premio": 3 #caso possua
 }
 ```
 ## 🔍 Referências
