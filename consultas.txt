@@ -1,0 +1,37 @@
+-
+● Consulta simples usando somente o básico SELECT, FROM, WHERE.
+
+SELECT * FROM 
+sistema.ator 
+WHERE ATOR = 'EMMA';
+
+● Consulta usando LIKE
+
+SELECT * FROM 
+sistema.filme 
+WHERE titulo ILIKE 'Birdman';
+
+● Consulta usando operadores de conjuntos
+
+--------------------------------------------------------------
+
+● Consulta usando um JOIN
+
+SELECT a.primeiro_nome, p.nome, p.ano, p.categoria 
+	FROM sistema.ator a 
+    INNER JOIN sistema.premios p 
+    USING (id_premios);
+
+● Consulta usando mais de um JOIN
+
+--------------------------------------------------------------
+
+● Consulta usando OUTER JOIN
+● Consulta usando função de agregação
+● Consulta usando GROUP BY
+● Consulta usando GROUP BY e HAVING
+● Consulta usando operador IN
+● Consulta usando operador EXISTS
+● Consulta usando operador SOME
+● Consulta usando operador ALL
+● Consulta aninhadas no FROM
