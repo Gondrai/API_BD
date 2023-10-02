@@ -16,7 +16,7 @@ DELETE_ATOR = (
 ) # Deletar ator 
 
 UPDATE_ATOR = (
-    "UPDATE sistema.ator SET primeiro_nome = %s, sobrenome = %s, data_nasc = %s WHERE id_ator = %s RETURNING id_ator"
+    "UPDATE sistema.ator SET {} WHERE id_ator = %s RETURNING id_ator"
 ) # Atualizar ator 
 
 INSERT_FILME = (
@@ -33,7 +33,7 @@ DELETE_FILME = (
 
 
 UPDATE_FILME = (
-    "UPDATE sistema.filme SET titulo=%s, subtitulo=%s, idioma_original=%s, sinopse=%s, ano=%s, duracao=%s, id_roteirista= %s, id_diretor= %s WHERE id_filme=%s RETURNING id_filme"
+    "UPDATE sistema.filme SET {} WHERE id_filme = %s RETURNING id_filme"
 ) # Atualizar filme 
 
 INSERT_RELACIONAMENTO = (
@@ -48,7 +48,7 @@ DELETE_RELACIONAMENTO = (
 ) # Deletar RELACIONAMENTO 
 
 UPDATE_RELACIONAMENTO = (
-    "UPDATE sistema.rel_papel_ator_filme SET id_papel = %s, id_ator = %s, id_filme = %s WHERE id_relacionamento = %s RETURNING id_relacionamento"
+    "UPDATE sistema.rel_papel_ator_filme SET {} WHERE id_relacionamento = %s RETURNING id_relacionamento"
 )
 
 load_dotenv()
@@ -101,12 +101,35 @@ def delete_atores(sobrenome, primeiro_nome):
         return f"Erro ao excluir o ator: {str(e)}"
 
 
-def update_atores(id_ator, primeiro_nome, sobrenome, data_nasc):
+def update_atores(id_ator, primeiro_nome=None, sobrenome=None, data_nasc=None):
     try:
         with connection:
             with connection.cursor() as cursor:
-                cursor.execute(UPDATE_ATOR, (primeiro_nome, sobrenome, data_nasc, id_ator))
+                set_clauses = []
+                params = []
+                
+                if primeiro_nome is not None:
+                    set_clauses.append("primeiro_nome = %s")
+                    params.append(primeiro_nome)
+                
+                if sobrenome is not None:
+                    set_clauses.append("sobrenome = %s")
+                    params.append(sobrenome)
+                
+                if data_nasc is not None:
+                    set_clauses.append("data_nasc = %s")
+                    params.append(data_nasc)
+                
+                if not set_clauses:
+                    return {"error": "Nenhum campo de atualização fornecido."}
+                
+                set_clause = ", ".join(set_clauses)
+                query = UPDATE_ATOR.format(set_clause)
+                params.append(id_ator)
+                
+                cursor.execute(query, params)
                 result = cursor.fetchone()
+                
                 if result:
                     id_ator = result[0]
                     connection.commit()
@@ -173,16 +196,59 @@ def delete_filmes(titulo, subtitulo):
     except psycopg2.Error as e:
         return f"Erro ao excluir o filme: {str(e)}"
 
-def update_filmes(id_filme, idioma_original, titulo, subtitulo, sinopse, ano, duracao, id_roteirista, id_diretor):
+def update_filmes(id_filme, idioma_original=None, titulo=None, subtitulo=None, sinopse=None, ano=None, duracao=None, id_roteirista=None, id_diretor=None):
     try:
         with connection:
             with connection.cursor() as cursor:
-                cursor.execute(UPDATE_FILME, (titulo, subtitulo, idioma_original, sinopse, ano, duracao,id_roteirista,id_diretor, id_filme))
+                set_clauses = []
+                params = []
+                
+                if titulo is not None:
+                    set_clauses.append("titulo = %s")
+                    params.append(titulo)
+                
+                if subtitulo is not None:
+                    set_clauses.append("subtitulo = %s")
+                    params.append(subtitulo)
+                
+                if idioma_original is not None:
+                    set_clauses.append("idioma_original = %s")
+                    params.append(idioma_original)
+                
+                if sinopse is not None:
+                    set_clauses.append("sinopse = %s")
+                    params.append(sinopse)
+                
+                if ano is not None:
+                    set_clauses.append("ano = %s")
+                    params.append(ano)
+                
+                if duracao is not None:
+                    set_clauses.append("duracao = %s")
+                    params.append(duracao)
+                
+                if id_roteirista is not None:
+                    set_clauses.append("id_roteirista = %s")
+                    params.append(id_roteirista)
+                
+                if id_diretor is not None:
+                    set_clauses.append("id_diretor = %s")
+                    params.append(id_diretor)
+                
+                if not set_clauses:
+                    return {"error": "Nenhum campo de atualização fornecido."}
+                
+                set_clause = ", ".join(set_clauses)
+                query = UPDATE_FILME.format(set_clause)
+                params.append(id_filme)
+                
+                cursor.execute(query, params)
                 result = cursor.fetchone()
+                
                 if result:
                     id_filme = result[0]
                     connection.commit()
-                    return {"id": id_filme, "message": f"Filme(a) com ID {id_filme} atualizado!"}
+                    return {"id": id_filme, "message": f"Filme com ID {id_filme} atualizado!"}
                 else:
                     return {"error": "Filme não encontrado para atualização."}
     except psycopg2.Error as e:
@@ -241,16 +307,39 @@ def delete_relacionamentos(id_relacionamento):
         return f"Erro ao excluir o Relacionamento: {str(e)}"
     
     
-def update_relacionamentos(id_relacionamento, id_papel, id_ator, id_filme):
+def update_relacionamentos(id_relacionamento, id_papel=None, id_ator=None, id_filme=None):
     try:
         with connection:
             with connection.cursor() as cursor:
-                cursor.execute(UPDATE_RELACIONAMENTO, (id_papel, id_ator, id_filme, id_relacionamento))
+                set_clauses = []
+                params = []
+                
+                if id_papel is not None:
+                    set_clauses.append("id_papel = %s")
+                    params.append(id_papel)
+                
+                if id_ator is not None:
+                    set_clauses.append("id_ator = %s")
+                    params.append(id_ator)
+                
+                if id_filme is not None:
+                    set_clauses.append("id_filme = %s")
+                    params.append(id_filme)
+                
+                if not set_clauses:
+                    return {"error": "Nenhum campo de atualização fornecido."}
+                
+                set_clause = ", ".join(set_clauses)
+                query = UPDATE_RELACIONAMENTO.format(set_clause)
+                params.append(id_relacionamento)
+                
+                cursor.execute(query, params)
                 result = cursor.fetchone()
+                
                 if result:
                     id_relacionamento = result[0]
                     connection.commit()
-                    return {"id": id_relacionamento, "message": f"Relacionamento(a) com ID {id_relacionamento} atualizado!"}
+                    return {"id": id_relacionamento, "message": f"Relacionamento com ID {id_relacionamento} atualizado!"}
                 else:
                     return {"error": "Relacionamento não encontrado para atualização."}
     except psycopg2.Error as e:

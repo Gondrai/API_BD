@@ -1,36 +1,131 @@
 -
 ● Consulta simples usando somente o básico SELECT, FROM, WHERE.
 
-SELECT * FROM 
-sistema.ator 
-WHERE ATOR = 'EMMA';
+SELECT * 
+	FROM sistema.ator 
+	WHERE primeiro_nome = 'Emma';
 
 ● Consulta usando LIKE
+-- SELECIONA O FILME QUANDO O TITULO TEM O COMEÇO IGUAL A 'Bir', NÃO DIFEERENCIA MAIÚSCULAS E MINUSCÚLAS.
+SELECT * 
+	FROM sistema.filme 
+	WHERE titulo ILIKE 'Bir%';
 
-SELECT * FROM 
-sistema.filme 
-WHERE titulo ILIKE 'Birdman';
+-- SELECIONAR O ATOR CUJO SOBRENOME TERMINA COM n, FAZ DISTINÇÃO ENTRE MAIÚSCULAS E MINUSCÚLAS.
+SELECT *
+    FROM sistema.ator
+    WHERE sobrenome LIKE '%n'
 
 ● Consulta usando operadores de conjuntos
 
---------------------------------------------------------------
+-- SElECIONA USUÁRIOS COMUNS DO SEXO FEMINO COM IDADE IGUAL A 22 ANOS.
+SELECT primeiro_nome, e_mail, idade
+	FROM sistema.usuario_comum
+	WHERE sexo = 'F'
+	INTERSECT 
+	SELECT primeiro_nome, e_mail, idade
+	FROM sistema.usuario_comum
+	WHERE idade = 22;	
+
+-- SELECIONA USUÁRIOS COMUNS MASCULINOS QUE POSSUEM ID MAIOR QUE 10.
+SELECT  e_mail, telefone, id_usuario_comum
+	FROM sistema.usuario_comum
+	WHERE sexo = 'M'
+	EXCEPT 
+	SELECT e_mail, telefone, id_usuario_comum
+	FROM sistema.usuario_comum
+	WHERE id_usuario_comum <= 10;
+
 
 ● Consulta usando um JOIN
-
-SELECT a.primeiro_nome, p.nome, p.ano, p.categoria 
-	FROM sistema.ator a 
-    INNER JOIN sistema.premios p 
-    USING (id_premios);
+-- SELECIONA O ALBUM E AUTOR DA TRILHA SONORA, E O NOME DOS FILMES OS QUAIS A TRILHA SONORA PERTENCE
+SELECT t.album,t.autor, f.titulo, f.subtitulo
+	FROM sistema.trilha_sonora t 
+    INNER JOIN sistema.filme f 
+    USING (id_filme);
 
 ● Consulta usando mais de um JOIN
 
---------------------------------------------------------------
+-- SELECIONA O NOME E SOBRENOME DO ATOR E O TITULO E SUBTITULO DO FILME QUE PARTICIPA
+SELECT a.primeiro_nome, a.sobrenome, f.titulo, f.subtitulo
+	FROM sistema.ator a
+	INNER JOIN sistema.rel_papel_ator_filme
+	USING (id_ator)
+	INNER JOIN sistema.filme f
+	USING (id_filme);
 
 ● Consulta usando OUTER JOIN
+-- SELECIONA O TITULO DO FILME, NOTA E CONTEUDO DA AVALIAÇÃO 
+-- MESMO QUE O FILME NÃO POSSUA UMA
+
+SELECT f.titulo, a.nota, a.conteudo
+	FROM sistema.filme f
+	LEFT JOIN sistema.avaliacao a
+	USING (id_filme);
+
+-- SELECIONA TODAS AS NOTAS DAS AVALIAÇÕES, 
+-- MESMO QUE NÃO TENHAM SIDO ESTABELECIDAS POR USUÁRIOS COMUNS
+
+SELECT u.primeiro_nome, u.e_mail, a.nota
+	FROM sistema.usuario_comum u
+	RIGHT JOIN sistema.avaliacao a
+	USING (id_usuario_comum);
+
 ● Consulta usando função de agregação
+
+-- SELECIONA MÉDIA DE IDADES DOS USUÁRIOS COMUNS
+SELECT AVG(idade)
+	FROM sistema.usuario_comum;
+
+-- SELECIONA A NOTA MÁXIMA PARA UM FILME, SOMENTE QUANDO É AVALIADO POR USUÁRIO POR USUÁRIOS COMUNS
+SELECT MAX(nota)
+	FROM sistema.avaliacao
+	WHERE id_usuario_comum IS NOT NULL;
+
+-- SELECIONA A SOMA DOS ATORES DA TABELA ATOR QUE ATUAM NO FILME 'La la land'
+SELECT COUNT(id_ator)
+	FROM sistema.ator a
+	INNER JOIN sistema.rel_papel_ator_filme r
+	USING (id_ator)
+	INNER JOIN sistema.filme f
+	USING (id_filme) WHERE f.titulo ILIKE 'La la land';
+
+-- SELECIONA A MENOR NOTA PARA O FILME 'A Saga Crepúsculo: Eclipse' E INFORMA 
+-- O NOME DO CRÍTICO PLATAFORMA QUE DEU ESSA NOTA
+SELECT MIN(nota), c.nome
+	FROM sistema.critico_plataforma c
+	INNER JOIN sistema.avaliacao a
+	USING (id_critico_plataforma)
+	INNER JOIN sistema.filme f
+	USING (id_filme) WHERE f.titulo ILIKE 'A Saga Crepúsculo: Eclipse'
+	GROUP BY c.nome;
+
 ● Consulta usando GROUP BY
+
+-- FAZ A CONTA DA QUANTIDADE DE FILMES DO id_diretor
+
+SELECT COUNT(f.id_filme) AS qntd_filmes, d.primeiro_nome, d.sobrenome
+	FROM sistema.filme f
+	INNER JOIN sistema.diretor d 
+	USING (id_diretor)
+	GROUP BY d.primeiro_nome, d.sobrenome;
+
 ● Consulta usando GROUP BY e HAVING
+
+-- SELECIONA O TITULO DO FILME E CALCULA A MÉDIA DE NOTAS
+-- DOS USUÁRIOS COMUNS, QUANDO TEM A MÉDIA <= 7
+SELECT f.titulo, AVG(a.nota) as media_notas
+	FROM sistema.avaliacao a
+	INNER JOIN sistema.filme f
+	USING (id_filme) WHERE 
+	a.id_usuario_comum IS NOT NULL
+	GROUP BY a.nota, f.titulo
+	HAVING AVG(nota) <= 7 ;
+
 ● Consulta usando operador IN
+
+
+
 ● Consulta usando operador EXISTS
 ● Consulta usando operador SOME
 ● Consulta usando operador ALL

@@ -5,7 +5,7 @@ from database_functions import update_relacionamentos, delete_relacionamentos, s
 
 app = Flask(__name__)
 
-@app.post("/api/inserir_atores")
+@app.post("/api/inserir_ator")
 def insert_ator_route():
     data = request.get_json()
     primeiro_nome = data.get("primeiro_nome")
@@ -20,7 +20,7 @@ def insert_ator_route():
     return result
 
 
-@app.get('/api/consultar_atores')
+@app.get('/api/consultar_ator')
 def consultar_atores_route():
     try:
         data = request.get_json()
@@ -31,7 +31,7 @@ def consultar_atores_route():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.get('/api/deletar_atores')
+@app.get('/api/deletar_ator')
 def deletar_atores_route():
     try:
         data = request.get_json()
@@ -56,7 +56,7 @@ def update_ator_route(id_ator):
     
     return result
 
-@app.post('/api/inserir_Filmes')
+@app.post('/api/inserir_Filme')
 def inserir_filmes_route():
     try:
         data = request.get_json()
@@ -77,7 +77,7 @@ def inserir_filmes_route():
     except Exception as e:
         return {"error": str(e)}
 
-@app.get('/api/consultar_filmes')
+@app.get('/api/consultar_filme')
 def consultar_filmes_route():
     try:
         data = request.get_json()
@@ -91,7 +91,7 @@ def consultar_filmes_route():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
-@app.get('/api/deletar_filmes')
+@app.get('/api/deletar_filme')
 def deletar_filmes_route():
     try:
         data = request.get_json()
@@ -112,8 +112,8 @@ def update_filme_route(id_filme):
     sinopse = data.get("sinopse")
     ano = data.get("ano")
     duracao = data.get("duracao")
-    id_roteirista = int(data.get("id_roteirista"))
-    id_diretor = int(data.get("id_diretor"))
+    id_roteirista = data.get("id_roteirista")
+    id_diretor = data.get("id_diretor")
     result = update_filmes(id_filme, idioma_original, titulo, subtitulo, sinopse, ano, duracao, id_roteirista, id_diretor)
     
     if "error" in result:
@@ -136,7 +136,7 @@ def insert_relacionamento_route():
     
     return result
 
-@app.get('/api/consultar_relacionamentos')
+@app.get('/api/consultar_relacionamento')
 def consultar_relacionamento_route():
     try:
         data = request.get_json()
