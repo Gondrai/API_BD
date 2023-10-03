@@ -15,7 +15,7 @@ Repositório para armazenar API, CRUD e QUERYS solicitadas na última etapa da m
 |database_functions| [Funções CRUD](database_functions.py)|
 |requirements| [Libs necessárias](requirements.txt)|
 |consultas| [Consultas(Querys)](consultas.txt)|
-|maprota_modelo.md| [Mapamento de rotas e modelos de JSON](rota_modelo.md)| 
+|maprota_modelo.md| [Mapamento de rotas e modelos de JSON](maprota_modelo.md)| 
 
 ## 💡 Observações e instruções: 
 
