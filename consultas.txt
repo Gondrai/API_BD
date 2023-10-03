@@ -1,4 +1,3 @@
--
 ● Consulta simples usando somente o básico SELECT, FROM, WHERE.
 
 SELECT * 
@@ -100,6 +99,11 @@ SELECT MIN(nota), c.nome
 	USING (id_filme) WHERE f.titulo ILIKE 'A Saga Crepúsculo: Eclipse'
 	GROUP BY c.nome;
 
+
+-- CONCATENA TODOS OS TITULOS DOS FILMES SEPARADOS POR UMA VIRGULA
+SELECT STRING_AGG(titulo, ', ' ORDER BY nome ASC) AS nomes_filmes
+	FROM sistema.filme;
+
 ● Consulta usando GROUP BY
 
 -- FAZ A CONTA DA QUANTIDADE DE FILMES DO id_diretor
@@ -117,16 +121,43 @@ SELECT COUNT(f.id_filme) AS qntd_filmes, d.primeiro_nome, d.sobrenome
 SELECT f.titulo, AVG(a.nota) as media_notas
 	FROM sistema.avaliacao a
 	INNER JOIN sistema.filme f
-	USING (id_filme) WHERE 
-	a.id_usuario_comum IS NOT NULL
+	USING (id_filme) 
+	WHERE a.id_usuario_comum IS NOT NULL
 	GROUP BY a.nota, f.titulo
 	HAVING AVG(nota) <= 7 ;
 
 ● Consulta usando operador IN
-
-
-
+-- SELECIONA OS FILMES QUANDO O GÊNERO FOR ROMANCE OU DRAMA
+SELECT titulo, subtitulo, sinopse
+	FROM sistema.filme WHERE id_genero IN( 5, 4);  -- 5: romance, 4: drama
+	
 ● Consulta usando operador EXISTS
+
+-- SELECIONA OS ATORES QUANDO ELES TÊM AO MENOS UM PRÊMIO
+SELECT a.primeiro_nome, a.sobrenome, a.id_premios
+	FROM sistema.ator a
+	WHERE EXISTS 
+	(SELECT 1 FROM sistema.premios p
+	 WHERE p.id_premios = a.id_premios);
+
 ● Consulta usando operador SOME
+
+-- SELECIONA OS ATORES QUANDO ELES TÊM AO MENOS UM PRÊMIO
+SELECT primeiro_nome, sobrenome, idade
+	FROM sistema.usuario_comum
+	WHERE idade > SOME (ARRAY[21, 25, 30]);
+
 ● Consulta usando operador ALL
+
+
 ● Consulta aninhadas no FROM
+
+-- SELECIONA O NOME DO FILME E A QUANTIDADE DE STREAMINGS QUE POSSUEM O FILME
+SELECT f.titulo , streaming.qtd_streaming
+	FROM sistema.filme f
+	JOIN (
+		SELECT id_filme, COUNT(*) AS qtd_streaming
+		FROM sistema.streaming
+		GROUP BY id_filme
+	) AS streaming
+	USING (id_filme);
