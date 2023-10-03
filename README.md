@@ -19,7 +19,7 @@ Repositório para armazenar API, CRUD e QUERYS solicitadas na última etapa da m
 
 ## 💡 Observações e instruções: 
 
-- Favor acessar o doc .Env e inserir suas credenciais de acesso ao banco. 
+- Favor acessar o doc .env e inserir suas credenciais de acesso ao banco. 
 - Favor verificar rotas, métodos e como os json devem ser enviados. 
 
 ## 🔍 Documentação
