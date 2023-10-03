@@ -23,7 +23,7 @@
 ```
 ## /api/atualizar_ator/<int:id_ator> -- Rota para atualizar ator - PUT
 ```
-{
+{# obrigatório informar ao menos 1
     "primeiro_nome":"felisberto",
     "sobrenome":"juas",
     "data_nasc":"yyyy-mm-dd" ,
@@ -58,7 +58,7 @@
 ```
 ## /api/atualizar_filme/<int:id_filme> -- Rota para atualizar filme - PUT
 ```
-{
+{# obrigatório informar ao menos 1
         "titulo": "Interestelar",
         "idioma_original": "Inglês",
         "subtitulo": "-",
