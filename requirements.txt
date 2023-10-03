@@ -1,3 +1,5 @@
 flask
 python-dotenv
 psycopg2-binary
+
+# caso já possua python instalado vá em seu terminal e digite o comando pip install -r requirements.txt
