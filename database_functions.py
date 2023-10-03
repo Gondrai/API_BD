@@ -1,6 +1,8 @@
 import os
 import psycopg2
 from dotenv import load_dotenv
+import json
+
 
 INSERT_ATOR = (
     "INSERT INTO sistema.ator(primeiro_nome, sobrenome, data_nasc) VALUES (%s, %s,%s) RETURNING id_ator"
@@ -28,7 +30,7 @@ SELECT_FILME = (
 ) # Selecionar filme 
 
 DELETE_FILME = (
-    "DELETE FROM sistema.filme WHERE titulo ILIKE %s and subtitulo ILIKE %s"
+    "DELETE FROM sistema.filme WHERE titulo = %s and subtitulo = %s"
 ) # Deletar filme 
 
 
@@ -38,18 +40,19 @@ UPDATE_FILME = (
 
 INSERT_RELACIONAMENTO = (
     "INSERT INTO sistema.rel_papel_ator_filme(id_papel, id_ator, id_filme) VALUES (%s, %s,%s) RETURNING id_relacionamento"
-    )
+) # Inserir relacionamento 
+
 SELECT_RELACIONAMENTO = (
     "SELECT id_papel, id_ator, id_filme, id_relacionamento FROM sistema.rel_papel_ator_filme WHERE id_relacionamento = %s" 
-)
+) # Selecionar relacionamento 
 
 DELETE_RELACIONAMENTO = (
    "DELETE FROM sistema.rel_papel_ator_filme WHERE id_relacionamento = %s"
-) # Deletar RELACIONAMENTO 
+) # Deletar relacionamento 
 
 UPDATE_RELACIONAMENTO = (
     "UPDATE sistema.rel_papel_ator_filme SET {} WHERE id_relacionamento = %s RETURNING id_relacionamento"
-)
+) # Atualizar relacionamento 
 
 load_dotenv()
 url = os.getenv("DATABASE_URL")
@@ -93,7 +96,7 @@ def delete_atores(sobrenome, primeiro_nome):
             with connection.cursor() as cursor:
                 cursor.execute(DELETE_ATOR, (sobrenome, primeiro_nome))
         if cursor.rowcount == 0:
-            # Se nenhum registro foi excluído (rowcount = 0), significa que o ator não foi encontrado
+            
             return f"Ator(a) {sobrenome} não encontrado na tabela."
         else:
             return f"Ator(a) {sobrenome} Deletado!"
@@ -188,7 +191,7 @@ def delete_filmes(titulo, subtitulo):
             with connection.cursor() as cursor:
                 cursor.execute(DELETE_FILME, (f'%{titulo}%', f'%{subtitulo}%'))
         if cursor.rowcount == 0:
-            # Se nenhum registro foi excluído (rowcount = 0), significa que o filme não foi encontrado
+            
             return f"Filme(a) {titulo}, {subtitulo} não encontrado na tabela."
         else:
             
@@ -290,7 +293,7 @@ def select_relacionamentos(id_relacionamento):
 
         return resultado_json
     except psycopg2.Error as e:
-        # Trate a exceção aqui, por exemplo, registrando-a ou retornando uma mensagem de erro
+        
         return {"error": str(e)}
     
 def delete_relacionamentos(id_relacionamento):
@@ -299,7 +302,7 @@ def delete_relacionamentos(id_relacionamento):
             with connection.cursor() as cursor:
                 cursor.execute(DELETE_RELACIONAMENTO, (id_relacionamento,))
         if cursor.rowcount == 0:
-            # Se nenhum registro foi excluído (rowcount = 0), significa que o ator não foi encontrado
+            
             return f"Relacionamento(a) {id_relacionamento} não encontrado na tabela."
         else:
             return f"Relacionamento(a) {id_relacionamento} Deletado!"
@@ -344,3 +347,35 @@ def update_relacionamentos(id_relacionamento, id_papel=None, id_ator=None, id_fi
                     return {"error": "Relacionamento não encontrado para atualização."}
     except psycopg2.Error as e:
         return {"error": str(e)}
+    
+#------------------------------------------------------------------------------------------------
+def realizar_transacao(dados):
+    try:
+        
+        with psycopg2.connect(url) as connection:
+            with connection.cursor() as cursor:
+                # Iniciar uma transação
+                cursor.execute("BEGIN;")
+
+                # Adicionar um novo filme
+                cursor.execute("INSERT INTO sistema.filme (titulo) VALUES (%s) RETURNING id_filme;", (dados['filme']['titulo'],))
+                filme_id = cursor.fetchone()[0]
+
+                # Adicionar atores
+                for ator in dados['atores']:
+                    cursor.execute("INSERT INTO sistema.ator (primeiro_nome, sobrenome, data_nasc) VALUES (%s, %s, %s) RETURNING id_ator;", (ator['primeiro_nome'], ator['sobrenome'], ator['data_nasc']))
+                    ator_id = cursor.fetchone()[0]
+
+                    # Atribuir atores aos papéis no novo filme
+                    for papel_nome in dados['papéis']:
+                        for papel_nome in dados['papéis']:
+                            cursor.execute("INSERT INTO sistema.papel (nome) VALUES (%s) RETURNING id_papel;", (papel_nome,))
+                            papel_id = cursor.fetchone()[0]
+                            cursor.execute("INSERT INTO sistema.rel_papel_ator_filme (id_papel, id_ator, id_filme) VALUES (%s, %s, %s);",
+                                            (papel_id, ator_id, filme_id))
+                # Confirmar a transação
+                cursor.execute("COMMIT")
+
+        return "Transação realizada com sucesso!"
+    except Exception as e:
+        return f"Erro na transação: {str(e)}"
