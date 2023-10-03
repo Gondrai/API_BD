@@ -2,8 +2,8 @@
 
 Repositório para armazenar API, CRUD e QUERYS solicitadas na última etapa da matéria de banco de dados.
 
-Tecnologias utilizadas:
-- [Python](https://web.dio.me) 🐍
+## 👩🏽‍💻 Tecnologias utilizadas:
+- [Python](https://www.python.org) 🐍
 
 ## 💻 Arquivos
 
@@ -15,36 +15,17 @@ Tecnologias utilizadas:
 |database_functions| [Funções CRUD](database_functions.py)|
 |requirements| [Libs necessárias](requirements.txt)|
 |consultas| [Consultas(Querys)](consultas.txt)|
+|maprota_modelo.md| [Mapamento de rotas e modelos de JSON](rota_modelo.md)| 
 
+## 💡 Observações e instruções: 
+
+- Favor acessar o doc .Env e inserir suas credenciais de acesso ao banco. 
+- Favor verificar rotas, métodos e como os json devem ser enviados. 
+
+## 🔍 Documentação
+- [Python](https://www.python.org/doc/) 🐍
+- [Flask](https://flask.palletsprojects.com/en/3.0.x/) 🌶
 
 ```
----------JSON inserir_ator--------
-{
-    "primeiro_nome":"felisberto"
-    "sobrenome":"juas"
-    "data_nasc":"yyyy-mm-dd" 
-    "id_premio": 3 #caso possua
-}
-----------------------------------
---------JSON inserir_filmes-------
-{
-    "idioma_original"  : "hindi",
-    "titulo"  :"viagem a tasmania",
-    "subtitulo" :"muito doida",
-    "sinopse" :"geral faz uma viagem mt doida a tasmania",
-    "ano" :"1805-12-23",
-    "duracao" : "2:50",
-    "id_roteirista": "20",
-    "id_diretor" : "35"
-}
-
-----------------------------------
-----JSON inserir_relacionamento---
-
-{
-    "id_papel"  : 92,
-    "id_ator"  : 73,
-    "id_filme" : 80
-}
+< Criado por Isabela de Gondra 🖖🏽 >
 ```
-## 🔍 Referências
