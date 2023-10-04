@@ -101,7 +101,7 @@ SELECT MIN(nota), c.nome
 
 
 -- CONCATENA TODOS OS TITULOS DOS FILMES SEPARADOS POR UMA VIRGULA
-SELECT STRING_AGG(titulo, ', ' ORDER BY nome ASC) AS nomes_filmes
+SELECT STRING_AGG(titulo, ', ' ORDER BY titulo ASC) AS nomes_filmes
 	FROM sistema.filme;
 
 ● Consulta usando GROUP BY
