@@ -142,7 +142,7 @@ SELECT a.primeiro_nome, a.sobrenome, a.id_premios
 
 ● Consulta usando operador SOME
 
--- SELECIONA OS ATORES QUANDO ELES TÊM AO MENOS UM PRÊMIO
+-- SELECIONA O PRIMEIRO NOME, SOBRENOME E IDADE DO USUÁRIO COMUM QUANDO A IDADE É MAIOR QUE AO MENOS UM DOS VALORES INDICADOS
 SELECT primeiro_nome, sobrenome, idade
 	FROM sistema.usuario_comum
 	WHERE idade > SOME (ARRAY[21, 25, 30]);
