@@ -148,7 +148,19 @@ SELECT primeiro_nome, sobrenome, idade
 	WHERE idade > SOME (ARRAY[21, 25, 30]);
 
 ● Consulta usando operador ALL
-
+-- SELECIONA FILMES CUJA NOTAS SÃO MAIORES QUE TODAS AS AVALIAÇÕS DOS FILMES COM GÊNERO DE "Ficção Científica"
+SELECT DISTINCT f.titulo, g.nome
+	FROM sistema.filme f
+	INNER JOIN sistema.genero g
+	USING (id_genero)
+	INNER JOIN sistema.avaliacao a 
+	USING (id_filme)
+	WHERE a.nota > ALL (
+		SELECT a.nota
+		FROM sistema.avaliacao
+		INNER JOIN sistema.filme 
+		USING (id_filme)
+	WHERE filme.id_genero = 6 --"Ficção Científica");
 
 ● Consulta aninhadas no FROM
 
